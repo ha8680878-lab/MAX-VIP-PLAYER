@@ -3,36 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAX VIP PLAYER - 2026</title>
+    <title>MAX VIP PLAYER</title>
     <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --brand-orange: #ff6600; --bg-dark: #000; }
-        body { margin: 0; background: var(--bg-dark); color: white; font-family: sans-serif; }
-        .container { max-width: 600px; margin: auto; padding: 20px; text-align: center; }
+        :root { --brand-orange: #ff6600; }
+        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; }
+        .container { max-width: 500px; margin: auto; padding: 20px; text-align: center; }
         
-        /* الهالة المتوهجة والشعار */
-        .logo-wrapper { position: relative; display: inline-block; margin-bottom: 20px; }
+        .logo-wrapper { position: relative; display: inline-block; margin: 20px 0; }
         .logo-glow { 
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 130px; height: 130px; border-radius: 50%; background: var(--brand-orange); 
-            filter: blur(40px); opacity: 0.5; animation: pulse 3s infinite; z-index: -1; 
+            width: 140px; height: 140px; border-radius: 50%; background: var(--brand-orange); 
+            filter: blur(45px); opacity: 0.4; z-index: -1; 
         }
-        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
-        .brand-logo { width: 120px; border-radius: 20px; }
+        .brand-logo { width: 120px; border-radius: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
 
-        .login-box { background: #111; padding: 20px; border-radius: 20px; border: 1px solid #333; }
-        input { width: 90%; padding: 12px; margin: 10px 0; border-radius: 10px; border: none; background: #222; color: #fff; text-align: center; }
-        .btn-connect { width: 95%; padding: 15px; background: var(--brand-orange); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .login-box { background: #111; padding: 25px; border-radius: 25px; border: 1px solid #222; }
+        input { width: 90%; padding: 14px; margin: 10px 0; border-radius: 12px; border: none; background: #1a1a1a; color: #fff; text-align: center; outline: none; }
+        input:focus { border: 1px solid var(--brand-orange); }
+        .btn-connect { width: 100%; padding: 16px; background: var(--brand-orange); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; }
 
         #main-app { display: none; margin-top: 20px; }
-        .video-wrapper { border-radius: 15px; overflow: hidden; margin-bottom: 20px; }
-        .playlist { background: #111; max-height: 300px; overflow-y: auto; border-radius: 10px; text-align: right; }
-        .channel { padding: 10px; border-bottom: 1px solid #222; cursor: pointer; display: flex; align-items: center; }
-        .channel:hover { background: #222; }
-        .channel img { width: 35px; height: 35px; margin-left: 10px; border-radius: 5px; }
+        .video-wrapper { border-radius: 20px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 0 40px #000; }
+        .search-bar { width: 90%; padding: 12px; margin-bottom: 15px; border-radius: 10px; background: #111; border: 1px solid #333; color: white; }
+        .playlist { background: #111; max-height: 400px; overflow-y: auto; border-radius: 15px; text-align: right; }
+        .channel { padding: 12px; border-bottom: 1px solid #222; cursor: pointer; display: flex; align-items: center; transition: 0.2s; }
+        .channel:hover { background: #1a1a1a; color: var(--brand-orange); }
+        .channel img { width: 40px; height: 40px; margin-left: 15px; border-radius: 8px; object-fit: cover; }
         
-        #status { color: #ff6600; font-size: 13px; margin: 10px 0; }
+        #status { color: var(--brand-orange); font-size: 13px; margin: 15px 0; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -44,18 +44,19 @@
     </div>
 
     <div id="login-form" class="login-box">
-        <h3>مشغل MAX VIP</h3>
-        <input type="text" id="host" placeholder="مثال: http://host:port">
-        <input type="text" id="user" placeholder="اسم المستخدم">
-        <input type="password" id="pass" placeholder="كلمة المرور">
+        <h3 style="margin-bottom:20px;">تسجيل الدخول - MAX VIP</h3>
+        <input type="text" id="host" placeholder="رابط السيرفر (Host)">
+        <input type="text" id="user" placeholder="اسم المستخدم (User)">
+        <input type="password" id="pass" placeholder="كلمة المرور (Pass)">
         <div id="status"></div>
         <button class="btn-connect" onclick="fetchM3U()">جلب قوائم التشغيل</button>
     </div>
 
     <div id="main-app">
         <div class="video-wrapper">
-            <video id="my-video" class="video-js vjs-fluid vjs-default-skin" controls></video>
+            <video id="my-video" class="video-js vjs-fluid vjs-default-skin vjs-big-play-centered" controls></video>
         </div>
+        <input type="text" class="search-bar" id="search" placeholder="ابحث عن قناة..." oninput="filterChannels()">
         <div class="playlist" id="playlist"></div>
     </div>
 </div>
@@ -63,60 +64,80 @@
 <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
 <script>
     const player = videojs('my-video');
+    let allChannels = [];
 
     async function fetchM3U() {
-        const host = document.getElementById('host').value;
-        const user = document.getElementById('user').value;
-        const pass = document.getElementById('pass').value;
+        const host = document.getElementById('host').value.trim().replace(/\/$/, "");
+        const user = document.getElementById('user').value.trim();
+        const pass = document.getElementById('pass').value.trim();
         const status = document.getElementById('status');
 
-        if(!host || !user || !pass) return;
+        if(!host || !user || !pass) {
+            status.innerText = "يرجى ملء كافة الحقول";
+            return;
+        }
 
         const m3uUrl = `${host}/get.php?username=${user}&password=${pass}&type=m3u_plus&output=ts`;
+        // استخدام بروكسي بديل أكثر استقراراً لعام 2026
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(m3uUrl)}`;
         
-        // استخدام بروكسي لتجاوز قيود CORS في المتصفح
-        const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(m3uUrl);
-        
-        status.innerText = "جاري جلب القنوات...";
+        status.innerText = "جاري الاتصال بالسيرفر...";
 
         try {
             const response = await fetch(proxyUrl);
             const json = await response.json();
             const data = json.contents;
 
-            if (data.includes("#EXTM3U")) {
+            if (data && data.includes("#EXTM3U")) {
                 parseM3U(data);
                 document.getElementById('login-form').style.display = 'none';
                 document.getElementById('main-app').style.display = 'block';
             } else {
-                status.innerText = "فشل الجلب، تأكد من البيانات";
+                status.innerText = "بيانات الاشتراك غير صحيحة أو السيرفر لا يستجيب";
             }
         } catch (e) {
-            status.innerText = "خطأ في الاتصال، حاول لاحقاً";
+            status.innerText = "خطأ في الشبكة، تأكد من اتصالك أو جرب بروكسي آخر";
         }
     }
 
     function parseM3U(data) {
         const lines = data.split('\n');
-        const list = document.getElementById('playlist');
-        list.innerHTML = "";
+        allChannels = [];
 
         for (let i = 0; i < lines.length; i++) {
             if (lines[i].startsWith('#EXTINF:')) {
-                const name = lines[i].split(',')[1];
-                const url = lines[i+1].trim();
+                const name = lines[i].split(',')[1]?.trim() || "قناة غير معروفة";
+                const url = lines[i+1]?.trim();
                 const logo = lines[i].match(/tvg-logo="(.*?)"/)?.[1] || "";
 
-                const div = document.createElement('div');
-                div.className = "channel";
-                div.innerHTML = `<img src="${logo}">${name}`;
-                div.onclick = () => {
-                    player.src({ src: url, type: 'application/x-mpegURL' });
-                    player.play();
-                };
-                list.appendChild(div);
+                if(url && url.startsWith('http')) {
+                    allChannels.push({ name, url, logo });
+                }
             }
         }
+        renderPlaylist(allChannels);
+    }
+
+    function renderPlaylist(channels) {
+        const list = document.getElementById('playlist');
+        list.innerHTML = channels.map(ch => `
+            <div class="channel" onclick="playChannel('${ch.url}')">
+                <img src="${ch.logo}" onerror="this.src='https://via.placeholder.com/40?text=TV'">
+                <span>${ch.name}</span>
+            </div>
+        `).join('');
+    }
+
+    function filterChannels() {
+        const term = document.getElementById('search').value.toLowerCase();
+        const filtered = allChannels.filter(ch => ch.name.toLowerCase().includes(term));
+        renderPlaylist(filtered);
+    }
+
+    function playChannel(url) {
+        player.src({ src: url, type: 'application/x-mpegURL' });
+        player.play();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 </body>
