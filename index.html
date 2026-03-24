@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --brand-orange: #ff6600; --brand-purple: #8e24aa; }
-        
-        /* خلفية ألوان احترافية متحركة */
         body { 
             margin: 0; padding: 0; min-height: 100vh; font-family: 'Segoe UI', Tahoma, sans-serif;
             background: linear-gradient(-45deg, #1a0524, #000, #2d0b3d, #050505);
@@ -20,7 +18,6 @@
 
         .container { width: 95%; max-width: 500px; text-align: center; z-index: 10; padding: 20px; }
 
-        /* شعار MAX VIP مع الهالة المتوهجة */
         .logo-wrapper { position: relative; display: inline-block; margin-bottom: 10px; }
         .logo-glow { 
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
@@ -30,12 +27,9 @@
         @keyframes pulse { 0%, 100% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.3; } 50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.6; } }
         .brand-logo { width: 140px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
 
-        /* الإحصائيات والتقييم */
         .live-stats { font-size: 13px; color: #00ff80; margin-bottom: 5px; font-weight: bold; }
-        .rating-stars { margin-bottom: 20px; color: #ffcc00; cursor: pointer; transition: 0.3s; }
-        .rating-stars:hover { transform: scale(1.1); }
+        .rating-stars { margin-bottom: 20px; color: #ffcc00; cursor: pointer; }
 
-        /* لوحة التحكم */
         .login-box { 
             background: rgba(255, 255, 255, 0.08); padding: 25px; border-radius: 30px; 
             backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.15); 
@@ -43,25 +37,22 @@
         }
         input { 
             padding: 15px; margin: 10px 0; width: 88%; border-radius: 12px; border: none; 
-            background: rgba(0,0,0,0.5); color: #fff; text-align: center; outline: none; transition: 0.3s;
+            background: rgba(0,0,0,0.5); color: #fff; text-align: center; outline: none;
         }
-        input:focus { box-shadow: 0 0 10px var(--brand-orange); }
         .btn-connect { 
             padding: 16px; background: linear-gradient(90deg, #ff6600, #ff9100); color: white; 
             border: none; cursor: pointer; border-radius: 12px; font-weight: bold; font-size: 18px; 
-            width: 100%; margin-top: 15px; transition: 0.3s; box-shadow: 0 5px 15px rgba(255,102,0,0.3);
+            width: 100%; margin-top: 15px; transition: 0.3s;
         }
 
-        /* الملاحظات */
         .notes-container { margin-top: 25px; text-align: right; }
         .note-item { 
             background: rgba(0,0,0,0.2); border-right: 3px solid var(--brand-orange); 
             padding: 12px; margin-bottom: 10px; border-radius: 5px; font-size: 13px; color: #ddd; 
         }
 
-        /* نافذة الدردشة */
         #chat-icon { position: fixed; bottom: 20px; left: 20px; background: var(--brand-orange); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 25px; cursor: pointer; z-index: 100; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
-        #chat-window { position: fixed; bottom: 90px; left: 20px; width: 280px; height: 380px; background: #111; border-radius: 20px; border: 1px solid #333; display: none; flex-direction: column; z-index: 100; overflow: hidden; box-shadow: 0 10px 40px #000; }
+        #chat-window { position: fixed; bottom: 90px; left: 20px; width: 280px; height: 380px; background: #111; border-radius: 20px; border: 1px solid #333; display: none; flex-direction: column; z-index: 100; overflow: hidden; }
         #chat-header { background: #222; padding: 12px; font-weight: bold; font-size: 14px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; }
         #chat-messages { flex: 1; padding: 12px; overflow-y: auto; font-size: 13px; text-align: right; }
         #chat-input-area { padding: 10px; display: flex; gap: 5px; border-top: 1px solid #333; }
@@ -84,22 +75,22 @@
 <body>
 
 <div class="container">
-    <div class="live-stats"><i class="fas fa-users"></i> متصل الآن: <span id="user-count">1,284</span></div>
+    <div class="live-stats"><i class="fas fa-users"></i> متصل الآن: <span id="user-count">1,312</span></div>
     
     <div class="logo-wrapper">
         <div class="logo-glow"></div>
-        <img src="https://i.ibb.co/Lhy6N6XJ/MAX-VIP-STORE.png" class="brand-logo" alt="MAX VIP STORE">
+        <img src="https://i.postimg.cc/Y9nDffmm/IMG-20260322-165940-496.webp" class="brand-logo" alt="MAX VIP STORE">
     </div>
 
-    <div class="rating-stars" onclick="rate()">
+    <div class="rating-stars" onclick="alert('شكراً لتقييمك!')">
         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
         <div style="font-size: 11px; color: #888; margin-top: 5px;">اضغط لتقييم المشغل</div>
     </div>
 
     <div id="login-form" class="login-box">
-        <input type="text" id="host" placeholder="رابط السيرفر (Host)">
-        <input type="text" id="user" placeholder="اسم المستخدم (User)">
-        <input type="password" id="pass" placeholder="كلمة المرور (Pass)">
+        <input type="text" id="host" placeholder="رابط السيرفر">
+        <input type="text" id="user" placeholder="اسم المستخدم">
+        <input type="password" id="pass" placeholder="كلمة المرور">
         <div id="status-msg"></div>
         <button class="btn-connect" onclick="checkConnection()">اتصال وتشغيل</button>
     </div>
@@ -134,20 +125,16 @@
 
 <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
 <script>
-    // تحديث عداد الزوار
     setInterval(() => {
         let count = Math.floor(Math.random() * (1600 - 1100) + 1100);
         document.getElementById('user-count').innerText = count.toLocaleString();
     }, 4000);
-
-    function rate() { alert("شكراً لتقييمك! نحن نسعى لتقديم الأفضل دائماً."); }
 
     function toggleChat() {
         const win = document.getElementById('chat-window');
         win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
     }
 
-    // إرسال الرسائل وحذفها بعد ساعة
     function sendMessage() {
         const input = document.getElementById('chat-msg-input');
         if (!input.value) return;
@@ -164,15 +151,12 @@
         let messages = JSON.parse(localStorage.getItem('max_chat_v3') || "[]");
         const filtered = messages.filter(m => (now - m.time) < 3600000);
         localStorage.setItem('max_chat_v3', JSON.stringify(filtered));
-        container.innerHTML = filtered.map(m => `
-            <div class="msg">${m.text}<span class="msg-time">${new Date(m.time).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})}</span></div>
-        `).join('');
+        container.innerHTML = filtered.map(m => `<div class="msg">${m.text}<span class="msg-time">${new Date(m.time).toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})}</span></div>`).join('');
         container.scrollTop = container.scrollHeight;
     }
     setInterval(renderMessages, 30000);
     renderMessages();
 
-    // تشغيل البث
     function checkConnection() {
         const h = document.getElementById('host').value;
         const u = document.getElementById('user').value;
@@ -184,7 +168,7 @@
             return;
         }
 
-        status.innerHTML = "جاري الاتصال بالسيرفر..."; status.className = "success"; status.style.display = "block";
+        status.innerHTML = "جاري الاتصال..."; status.className = "success"; status.style.display = "block";
 
         setTimeout(() => {
             const player = videojs('my-video');
