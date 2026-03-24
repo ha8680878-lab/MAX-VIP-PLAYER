@@ -2,142 +2,84 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAX VIP PLAYER</title>
-    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>MAX VIP PLAYER - LG WebOS Edition</title>
+    <link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet" />
     <style>
-        :root { --brand-orange: #ff6600; }
-        body { margin: 0; background: #000; color: white; font-family: 'Segoe UI', sans-serif; }
-        .container { max-width: 500px; margin: auto; padding: 20px; text-align: center; }
+        body { margin: 0; background: #000; color: white; font-family: sans-serif; overflow: hidden; }
+        .container { width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        .logo-wrapper { position: relative; display: inline-block; margin: 20px 0; }
-        .logo-glow { 
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 140px; height: 140px; border-radius: 50%; background: var(--brand-orange); 
-            filter: blur(45px); opacity: 0.4; z-index: -1; 
-        }
-        .brand-logo { width: 120px; border-radius: 22px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .logo-box { margin-bottom: 20px; text-align: center; }
+        .brand-logo { width: 150px; border-radius: 20px; border: 2px solid #ff6600; }
 
-        .login-box { background: #111; padding: 25px; border-radius: 25px; border: 1px solid #222; }
-        input { width: 90%; padding: 14px; margin: 10px 0; border-radius: 12px; border: none; background: #1a1a1a; color: #fff; text-align: center; outline: none; }
-        input:focus { border: 1px solid var(--brand-orange); }
-        .btn-connect { width: 100%; padding: 16px; background: var(--brand-orange); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; }
+        .login-form { background: rgba(20,20,20,0.9); padding: 30px; border-radius: 20px; width: 400px; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; border: none; background: #333; color: #fff; font-size: 18px; text-align: center; }
+        .btn { width: 100%; padding: 20px; background: #ff6600; color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 20px; cursor: pointer; }
 
-        #main-app { display: none; margin-top: 20px; }
-        .video-wrapper { border-radius: 20px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 0 40px #000; }
-        .search-bar { width: 90%; padding: 12px; margin-bottom: 15px; border-radius: 10px; background: #111; border: 1px solid #333; color: white; }
-        .playlist { background: #111; max-height: 400px; overflow-y: auto; border-radius: 15px; text-align: right; }
-        .channel { padding: 12px; border-bottom: 1px solid #222; cursor: pointer; display: flex; align-items: center; transition: 0.2s; }
-        .channel:hover { background: #1a1a1a; color: var(--brand-orange); }
-        .channel img { width: 40px; height: 40px; margin-left: 15px; border-radius: 8px; object-fit: cover; }
-        
-        #status { color: var(--brand-orange); font-size: 13px; margin: 15px 0; font-weight: bold; }
+        #player-layer { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; background: #000; }
+        .error-msg { color: #ff3333; margin-top: 10px; font-size: 14px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="logo-wrapper">
-        <div class="logo-glow"></div>
-        <img src="https://i.postimg.cc/Y9nDffmm/IMG-20260322-165940-496.webp" class="brand-logo" alt="MAX VIP">
+<div class="container" id="auth-layer">
+    <div class="logo-box">
+        <img src="https://i.postimg.cc/Y9nDffmm/IMG-20260322-165940-496.webp" class="brand-logo">
     </div>
-
-    <div id="login-form" class="login-box">
-        <h3 style="margin-bottom:20px;">تسجيل الدخول - MAX VIP</h3>
-        <input type="text" id="host" placeholder="رابط السيرفر (Host)">
-        <input type="text" id="user" placeholder="اسم المستخدم (User)">
-        <input type="password" id="pass" placeholder="كلمة المرور (Pass)">
-        <div id="status"></div>
-        <button class="btn-connect" onclick="fetchM3U()">جلب قوائم التشغيل</button>
-    </div>
-
-    <div id="main-app">
-        <div class="video-wrapper">
-            <video id="my-video" class="video-js vjs-fluid vjs-default-skin vjs-big-play-centered" controls></video>
-        </div>
-        <input type="text" class="search-bar" id="search" placeholder="ابحث عن قناة..." oninput="filterChannels()">
-        <div class="playlist" id="playlist"></div>
+    <div class="login-form">
+        <input type="text" id="host" placeholder="رابط السيرفر مع البورت">
+        <input type="text" id="user" placeholder="اسم المستخدم">
+        <input type="password" id="pass" placeholder="كلمة المرور">
+        <div id="status" class="error-msg"></div>
+        <button class="btn" onclick="startLGPlayer()">دخول وتوصيل</button>
     </div>
 </div>
 
-<script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
-<script>
-    const player = videojs('my-video');
-    let allChannels = [];
+<div id="player-layer">
+    <video id="lg-video" class="video-js vjs-fill vjs-default-skin" controls autoplay preload="auto"></video>
+</div>
 
-    async function fetchM3U() {
-        const host = document.getElementById('host').value.trim().replace(/\/$/, "");
+<script src="https://vjs.zencdn.net/7.10.2/video.min.js"></script>
+<script>
+    function startLGPlayer() {
+        const host = document.getElementById('host').value.trim();
         const user = document.getElementById('user').value.trim();
         const pass = document.getElementById('pass').value.trim();
         const status = document.getElementById('status');
 
         if(!host || !user || !pass) {
-            status.innerText = "يرجى ملء كافة الحقول";
+            status.innerText = "يرجى إكمال البيانات";
             return;
         }
 
-        const m3uUrl = `${host}/get.php?username=${user}&password=${pass}&type=m3u_plus&output=ts`;
-        // استخدام بروكسي بديل أكثر استقراراً لعام 2026
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(m3uUrl)}`;
+        // تحويل الرابط إلى صيغة متوافقة مع WebOS
+        // نستخدم 1.m3u8 كقناة تجريبية أولى للتأكد من الاتصال
+        const streamUrl = `${host}/live/${user}/${pass}/1.m3u8`;
         
+        // سر النجاح في WebOS: استخدام رابط مباشر بدون HTTPS إذا كان السيرفر يدعم ذلك
+        // أو استخدام بروكسي "CORS-Anywhere"
         status.innerText = "جاري الاتصال بالسيرفر...";
 
         try {
-            const response = await fetch(proxyUrl);
-            const json = await response.json();
-            const data = json.contents;
+            document.getElementById('auth-layer').style.display = 'none';
+            document.getElementById('player-layer').style.display = 'block';
+            
+            const player = videojs('lg-video');
+            player.src({
+                src: streamUrl,
+                type: 'application/x-mpegURL'
+            });
 
-            if (data && data.includes("#EXTM3U")) {
-                parseM3U(data);
-                document.getElementById('login-form').style.display = 'none';
-                document.getElementById('main-app').style.display = 'block';
-            } else {
-                status.innerText = "بيانات الاشتراك غير صحيحة أو السيرفر لا يستجيب";
-            }
+            player.play();
+            
+            player.on('error', function() {
+                status.innerText = "خطأ: السيرفر يرفض الاتصال من المتصفح";
+                document.getElementById('auth-layer').style.display = 'flex';
+                document.getElementById('player-layer').style.display = 'none';
+            });
+
         } catch (e) {
-            status.innerText = "خطأ في الشبكة، تأكد من اتصالك أو جرب بروكسي آخر";
+            status.innerText = "فشل في تشغيل المحرك";
         }
-    }
-
-    function parseM3U(data) {
-        const lines = data.split('\n');
-        allChannels = [];
-
-        for (let i = 0; i < lines.length; i++) {
-            if (lines[i].startsWith('#EXTINF:')) {
-                const name = lines[i].split(',')[1]?.trim() || "قناة غير معروفة";
-                const url = lines[i+1]?.trim();
-                const logo = lines[i].match(/tvg-logo="(.*?)"/)?.[1] || "";
-
-                if(url && url.startsWith('http')) {
-                    allChannels.push({ name, url, logo });
-                }
-            }
-        }
-        renderPlaylist(allChannels);
-    }
-
-    function renderPlaylist(channels) {
-        const list = document.getElementById('playlist');
-        list.innerHTML = channels.map(ch => `
-            <div class="channel" onclick="playChannel('${ch.url}')">
-                <img src="${ch.logo}" onerror="this.src='https://via.placeholder.com/40?text=TV'">
-                <span>${ch.name}</span>
-            </div>
-        `).join('');
-    }
-
-    function filterChannels() {
-        const term = document.getElementById('search').value.toLowerCase();
-        const filtered = allChannels.filter(ch => ch.name.toLowerCase().includes(term));
-        renderPlaylist(filtered);
-    }
-
-    function playChannel(url) {
-        player.src({ src: url, type: 'application/x-mpegURL' });
-        player.play();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 </script>
 </body>
